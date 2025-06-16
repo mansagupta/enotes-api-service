@@ -3,6 +3,7 @@ package com.example.Enotes_API_Service.controller;
 import com.example.Enotes_API_Service.dto.CategoryDto;
 import com.example.Enotes_API_Service.dto.CategoryResponse;
 import com.example.Enotes_API_Service.entity.Category;
+import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,8 @@ public class CategoryController {
     }
 
     @GetMapping("/getById/{id}")
-    public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id){
+    public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception {
+
         CategoryDto categoryDto = categoryService.getCategoryById(id);
         if(ObjectUtils.isEmpty(categoryDto)){
             return new ResponseEntity<>("Category not found with id: "+id, HttpStatus.NOT_FOUND);
