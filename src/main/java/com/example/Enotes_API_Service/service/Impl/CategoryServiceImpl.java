@@ -6,6 +6,7 @@ import com.example.Enotes_API_Service.entity.Category;
 import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.repository.CategoryRepository;
 import com.example.Enotes_API_Service.service.CategoryService;
+import com.example.Enotes_API_Service.util.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +25,14 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    @Autowired
+    private Validation validation;
+
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
+
+        // Validation checking
+        validation.categoryValidation(categoryDto);
 
         Category category = mapper.map(categoryDto, Category.class);
 
