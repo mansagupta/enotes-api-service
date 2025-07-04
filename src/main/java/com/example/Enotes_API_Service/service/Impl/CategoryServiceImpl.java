@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,8 +37,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         if(ObjectUtils.isEmpty(category.getId())){
             category.setIsDeleted(false);
-            category.setCreatedBy(1);
-            category.setCreatedOn(new Date());
+//            category.setCreatedBy(1);
+//            category.setCreatedOn(new Date());
         } else {
             updateCategory(category);
         }
@@ -55,8 +54,8 @@ public class CategoryServiceImpl implements CategoryService {
             category.setCreatedOn(existing.getCreatedOn());
             category.setIsDeleted(existing.getIsDeleted());
 
-            category.setUpdatedBy(1);
-            category.setUpdatedOn(new Date());
+//            category.setUpdatedBy(1);
+//            category.setUpdatedOn(new Date());
         }
     }
 
