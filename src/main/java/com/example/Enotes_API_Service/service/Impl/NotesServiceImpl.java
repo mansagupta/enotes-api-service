@@ -40,7 +40,7 @@ public class NotesServiceImpl implements NotesService {
     @Autowired
     private ModelMapper mapper;
 
-    @Value("${file.upload.path")
+    @Value("${file.upload.path}")
     private String uploadPath;
 
     @Override
