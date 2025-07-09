@@ -15,10 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class NotesServiceImpl implements NotesService {
     private String uploadPath;
 
     @Override
-    public Boolean saveNotes(String notes, MultipartFile file) throws ResourceNotFoundException, IOException {
+    public Boolean saveNotes(String notes, MultipartFile file) throws Exception {
 
         ObjectMapper ob = new ObjectMapper();
         NotesDto notesDto = ob.readValue(notes, NotesDto.class);
@@ -69,7 +69,7 @@ public class NotesServiceImpl implements NotesService {
         return false;
     }
 
-    private FileDetails saveFileDetails(MultipartFile file) throws IOException {
+    private FileDetails saveFileDetails(MultipartFile file) throws Exception {
 
         if(!ObjectUtils.isEmpty(file) && !file.isEmpty()){
 
@@ -125,8 +125,19 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public List<NotesDto> getAllNotes() {
-
         return notesRepository.findAll().stream()
                 .map(note->mapper.map(note, NotesDto.class)).toList();
+    }
+
+    @Override
+    public FileDetails getFileDetails(Integer id) throws Exception {
+        return fileRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("file is not available!"));
+    }
+
+    @Override
+    public byte[] downloadFile(FileDetails fileDetails) throws Exception {
+
+        InputStream io = new FileInputStream(fileDetails.getPath());
+        return StreamUtils.copyToByteArray(io);
     }
 }

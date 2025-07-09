@@ -2,12 +2,15 @@ package com.example.Enotes_API_Service.controller;
 
 
 import com.example.Enotes_API_Service.dto.NotesDto;
+import com.example.Enotes_API_Service.entity.FileDetails;
 import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.service.NotesService;
 import com.example.Enotes_API_Service.util.CommonUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,7 +27,7 @@ public class NotesController {
     private NotesService notesService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> saveNotes(@RequestParam String notes, @RequestParam(required = false) MultipartFile file) throws ResourceNotFoundException, IOException {
+    public ResponseEntity<?> saveNotes(@RequestParam String notes, @RequestParam(required = false) MultipartFile file) throws Exception {
         Boolean saveNotes = notesService.saveNotes(notes, file);
         if(saveNotes) {
             return CommonUtil.createBuildResponseMessage("notes saved success", HttpStatus.CREATED);
@@ -39,5 +42,18 @@ public class NotesController {
             return ResponseEntity.noContent().build();
         }
         return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+    }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> downloadFile(@PathVariable Integer id) throws Exception {
+        FileDetails fileDetails = notesService.getFileDetails(id);
+        byte[] data= notesService.downloadFile(fileDetails);
+
+        HttpHeaders headers = new HttpHeaders();
+        String contentType = CommonUtil.getContentType(fileDetails.getOriginalFileName());
+        headers.setContentType(MediaType.parseMediaType(contentType));
+        headers.setContentDispositionFormData("attachment", fileDetails.getOriginalFileName());
+        return ResponseEntity.ok().headers(headers).body(data);
+
     }
 }
