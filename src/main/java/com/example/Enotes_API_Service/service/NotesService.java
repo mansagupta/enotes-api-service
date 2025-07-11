@@ -1,13 +1,10 @@
 package com.example.Enotes_API_Service.service;
 
 import com.example.Enotes_API_Service.dto.NotesDto;
+import com.example.Enotes_API_Service.dto.NotesResponse;
 import com.example.Enotes_API_Service.entity.FileDetails;
-import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 public interface NotesService {
@@ -19,4 +16,6 @@ public interface NotesService {
     public byte[] downloadFile(FileDetails fileDetails) throws Exception;
 
     public FileDetails getFileDetails(Integer id) throws Exception;
+
+    public NotesResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize);
 }
