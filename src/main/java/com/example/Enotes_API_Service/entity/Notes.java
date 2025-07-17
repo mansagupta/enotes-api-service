@@ -8,6 +8,8 @@ import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+import java.util.Date;
+
 @EnableJpaAuditing
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,4 +33,7 @@ public class Notes extends BaseModel{
     @ManyToOne
     private FileDetails fileDetails;
 
+    private Boolean isDeleted;
+
+    private Date deletedOn;
 }
