@@ -4,10 +4,8 @@ package com.example.Enotes_API_Service.controller;
 import com.example.Enotes_API_Service.dto.NotesDto;
 import com.example.Enotes_API_Service.dto.NotesResponse;
 import com.example.Enotes_API_Service.entity.FileDetails;
-import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.service.NotesService;
 import com.example.Enotes_API_Service.util.CommonUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,8 +15,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/v1/notes")
@@ -90,5 +88,18 @@ public class NotesController {
             return CommonUtil.createBuildResponseMessage("Notes not available in bin!", HttpStatus.OK);
         }
         return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> hardDeleteNotes(@PathVariable Integer id) throws Exception {
+        notesService.hardDeleteNotes(id);
+        return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/empty-bin")
+    public ResponseEntity<?> emptyRecycleBin() throws Exception {
+        int userId = 1;
+        notesService.emptyRecycleBin(userId);
+        return CommonUtil.createBuildResponseMessage("Delete Success", HttpStatus.OK);
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -178,7 +180,7 @@ public class NotesServiceImpl implements NotesService {
     public void softDeleteNotes(Integer id) throws Exception {
         Notes notes = notesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Notes id invalid!"));
         notes.setIsDeleted(true);
-        notes.setDeletedOn(new Date());
+        notes.setDeletedOn(LocalDateTime.now());
         notesRepository.save(notes);
     }
 
@@ -194,5 +196,23 @@ public class NotesServiceImpl implements NotesService {
     public List<NotesDto> getUserRecycleBinNotes(Integer userId) {
         List<Notes> recycleNotes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
         return recycleNotes.stream().map(notes->mapper.map(notes, NotesDto.class)).toList();
+    }
+
+    @Override
+    public void hardDeleteNotes(Integer id) throws Exception{
+        Notes notes = notesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Notes not found."));
+        if(notes.getIsDeleted()){
+            notesRepository.delete(notes);
+        }else {
+            throw new IllegalArgumentException("Direct hard delete is not available.");
+        }
+    }
+
+    @Override
+    public void emptyRecycleBin(int userId) {
+        List<Notes> recycleNotes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
+        if(!CollectionUtils.isEmpty(recycleNotes)){
+            notesRepository.deleteAll(recycleNotes);
+        }
     }
 }
