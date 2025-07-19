@@ -1,7 +1,9 @@
 package com.example.Enotes_API_Service.service;
 
+import com.example.Enotes_API_Service.dto.FavoriteNotesDto;
 import com.example.Enotes_API_Service.dto.NotesDto;
 import com.example.Enotes_API_Service.dto.NotesResponse;
+import com.example.Enotes_API_Service.entity.FavoriteNotes;
 import com.example.Enotes_API_Service.entity.FileDetails;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -28,4 +30,10 @@ public interface NotesService {
     public void hardDeleteNotes(Integer id) throws Exception;
 
     public void emptyRecycleBin(int userId);
+
+    public void favoriteNotes(Integer notesId) throws Exception;
+
+    public void unFavoriteNotes(Integer favoriteNotesId) throws Exception;
+
+    public List<FavoriteNotesDto> getUserFavoriteNotes() throws Exception;
 }

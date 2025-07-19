@@ -1,11 +1,14 @@
 package com.example.Enotes_API_Service.service.Impl;
 
+import com.example.Enotes_API_Service.dto.FavoriteNotesDto;
 import com.example.Enotes_API_Service.dto.NotesDto;
 import com.example.Enotes_API_Service.dto.NotesResponse;
+import com.example.Enotes_API_Service.entity.FavoriteNotes;
 import com.example.Enotes_API_Service.entity.FileDetails;
 import com.example.Enotes_API_Service.entity.Notes;
 import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.repository.CategoryRepository;
+import com.example.Enotes_API_Service.repository.FavoriteNotesRepository;
 import com.example.Enotes_API_Service.repository.FileRepository;
 import com.example.Enotes_API_Service.repository.NotesRepository;
 import com.example.Enotes_API_Service.service.NotesService;
@@ -37,6 +40,9 @@ public class NotesServiceImpl implements NotesService {
 
     @Autowired
     private NotesRepository notesRepository;
+
+    @Autowired
+    private FavoriteNotesRepository favoriteNotesRepository;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -157,7 +163,7 @@ public class NotesServiceImpl implements NotesService {
         Page<Notes> pageNotes = notesRepository.findByCreatedByAndIsDeletedFalse(userId, pageable);
 
         List<NotesDto> notesDto = pageNotes.get().map(n -> mapper.map(n, NotesDto.class)).toList();
-        NotesResponse notes = NotesResponse.builder()
+        return NotesResponse.builder()
                 .notes(notesDto)
                 .pageNo(pageNotes.getNumber())
                 .pageSize(pageNotes.getSize())
@@ -166,7 +172,6 @@ public class NotesServiceImpl implements NotesService {
                 .isFirst(pageNotes.isFirst())
                 .isLast(pageNotes.isLast())
                 .build();
-        return notes;
     }
 
     @Override
@@ -214,5 +219,29 @@ public class NotesServiceImpl implements NotesService {
         if(!CollectionUtils.isEmpty(recycleNotes)){
             notesRepository.deleteAll(recycleNotes);
         }
+    }
+
+    @Override
+    public void favoriteNotes(Integer notesId) throws Exception {
+        int userId = 1;
+        Notes notes = notesRepository.findById(notesId).orElseThrow(() -> new ResourceNotFoundException("Favorite Notes not found, invalid notes id!"));
+        FavoriteNotes favoriteNotes = FavoriteNotes.builder()
+                .notes(notes)
+                .userId(userId)
+                .build();
+        favoriteNotesRepository.save(favoriteNotes);
+    }
+
+    @Override
+    public void unFavoriteNotes(Integer favoriteNotesId) throws Exception {
+        FavoriteNotes favNotes = favoriteNotesRepository.findById(favoriteNotesId).orElseThrow(() -> new ResourceNotFoundException("Favorite notes not found, invalid notes id!"));
+        favoriteNotesRepository.delete(favNotes);
+    }
+
+    @Override
+    public List<FavoriteNotesDto> getUserFavoriteNotes() throws Exception {
+        int userId = 1;
+        List<FavoriteNotes> favoriteNotes = favoriteNotesRepository.findByUserId(userId);
+        return favoriteNotes.stream().map(fn -> mapper.map(fn, FavoriteNotesDto.class)).toList();
     }
 }
