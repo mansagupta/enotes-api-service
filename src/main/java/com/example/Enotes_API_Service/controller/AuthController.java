@@ -3,6 +3,7 @@ package com.example.Enotes_API_Service.controller;
 import com.example.Enotes_API_Service.dto.UserDto;
 import com.example.Enotes_API_Service.service.UserService;
 import com.example.Enotes_API_Service.util.CommonUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,17 +13,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     @Autowired
     private UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto){
-        Boolean register = userService.register(userDto);
+    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto, HttpServletRequest request) throws Exception {
+        String url = CommonUtil.getUrl(request);
+        Boolean register = userService.register(userDto, url);
         if(register){
-            return CommonUtil.createBuildResponseMessage("Registration sucessfull", HttpStatus.CREATED);
+            return CommonUtil.createBuildResponseMessage("Registration successful", HttpStatus.CREATED);
         }
         return CommonUtil.createErrorResponseMessage("Registration failed!", HttpStatus.INTERNAL_SERVER_ERROR);
     }

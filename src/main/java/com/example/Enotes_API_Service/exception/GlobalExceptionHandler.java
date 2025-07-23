@@ -38,6 +38,11 @@ public class GlobalExceptionHandler {
         return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(SuccessException.class)
+    public ResponseEntity<?> handleSuccessException(SuccessException e){
+        return CommonUtil.createBuildResponseMessage(e.getMessage(), HttpStatus.OK);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e){
         return CommonUtil.createErrorResponseMessage(e.getMessage(), HttpStatus.BAD_REQUEST);

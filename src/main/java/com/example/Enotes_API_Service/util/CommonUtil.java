@@ -1,6 +1,7 @@
 package com.example.Enotes_API_Service.util;
 
 import com.example.Enotes_API_Service.handler.GenericResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -57,5 +58,11 @@ public class CommonUtil {
             case "jpeg" -> "image/jpeg";
             default -> "application/octet-stream";
         };
+    }
+
+    public static String getUrl(HttpServletRequest request) {
+        String apiUrl = request.getRequestURL().toString();
+        apiUrl = apiUrl.replace(request.getServletPath(), "");
+        return apiUrl;
     }
 }
