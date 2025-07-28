@@ -1,6 +1,9 @@
 package com.example.Enotes_API_Service.service.Impl;
 
+import com.example.Enotes_API_Service.config.security.CustomUserDetails;
 import com.example.Enotes_API_Service.dto.EmailRequest;
+import com.example.Enotes_API_Service.dto.LoginRequest;
+import com.example.Enotes_API_Service.dto.LoginResponse;
 import com.example.Enotes_API_Service.dto.UserDto;
 import com.example.Enotes_API_Service.entity.AccountStatus;
 import com.example.Enotes_API_Service.entity.Role;
@@ -13,6 +16,10 @@ import com.example.Enotes_API_Service.util.Validation;
 import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -37,6 +44,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Override
     public Boolean register(UserDto userDto, String url) throws Exception{
 
@@ -49,13 +62,25 @@ public class UserServiceImpl implements UserService {
                 .verificationCode(UUID.randomUUID().toString())
                 .build();
         user.setStatus(status);
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User saveUser = userRepository.save(user);
         if(!ObjectUtils.isEmpty(saveUser)){
             emailSend(saveUser, url);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+        if(authenticate.isAuthenticated()){
+            CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .user(mapper.map(customUserDetails.getUser(), UserDto.class)).build();
+            return loginResponse;
+        }
+        return null;
     }
 
     private void emailSend(User saveUser, String url) throws Exception{
