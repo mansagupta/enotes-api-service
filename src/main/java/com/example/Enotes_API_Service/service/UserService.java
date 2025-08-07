@@ -9,5 +9,5 @@ public interface UserService {
 
     public Boolean register(UserDto userDto, String url) throws Exception;
 
-    LoginResponse login(LoginRequest loginRequest);
+    public LoginResponse login(LoginRequest loginRequest);
 }

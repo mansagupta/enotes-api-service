@@ -10,6 +10,7 @@ import com.example.Enotes_API_Service.entity.Role;
 import com.example.Enotes_API_Service.entity.User;
 import com.example.Enotes_API_Service.repository.RoleRepository;
 import com.example.Enotes_API_Service.repository.UserRepository;
+import com.example.Enotes_API_Service.service.JwtService;
 import com.example.Enotes_API_Service.service.UserService;
 import com.example.Enotes_API_Service.service.EmailService;
 import com.example.Enotes_API_Service.util.Validation;
@@ -50,6 +51,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public Boolean register(UserDto userDto, String url) throws Exception{
 
@@ -73,12 +77,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+
         if(authenticate.isAuthenticated()){
-            CustomUserDetails customUserDetails = (CustomUserDetails) authenticate.getPrincipal();
-            LoginResponse loginResponse = LoginResponse.builder()
-                    .user(mapper.map(customUserDetails.getUser(), UserDto.class)).build();
-            return loginResponse;
+            CustomUserDetails customUserDetails = (CustomUserDetails)authenticate.getPrincipal();
+
+            String token = jwtService.generateToken(customUserDetails.getUser());
+
+            return LoginResponse.builder()
+                    .user(mapper.map(customUserDetails.getUser(), UserDto.class))
+                    .token(token).build();
         }
         return null;
     }
