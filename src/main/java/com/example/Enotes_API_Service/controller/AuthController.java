@@ -2,7 +2,7 @@ package com.example.Enotes_API_Service.controller;
 
 import com.example.Enotes_API_Service.dto.LoginRequest;
 import com.example.Enotes_API_Service.dto.LoginResponse;
-import com.example.Enotes_API_Service.dto.UserDto;
+import com.example.Enotes_API_Service.dto.UserRequest;
 import com.example.Enotes_API_Service.service.UserService;
 import com.example.Enotes_API_Service.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,9 +23,9 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/save")
-    public ResponseEntity<?> registerUser(@RequestBody UserDto userDto, HttpServletRequest request) throws Exception {
+    public ResponseEntity<?> registerUser(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception {
         String url = CommonUtil.getUrl(request);
-        Boolean register = userService.register(userDto, url);
+        Boolean register = userService.register(userRequest, url);
         if(register){
             return CommonUtil.createBuildResponseMessage("Registration successful", HttpStatus.CREATED);
         }

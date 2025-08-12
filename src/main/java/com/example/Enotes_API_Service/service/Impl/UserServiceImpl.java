@@ -4,7 +4,7 @@ import com.example.Enotes_API_Service.config.security.CustomUserDetails;
 import com.example.Enotes_API_Service.dto.EmailRequest;
 import com.example.Enotes_API_Service.dto.LoginRequest;
 import com.example.Enotes_API_Service.dto.LoginResponse;
-import com.example.Enotes_API_Service.dto.UserDto;
+import com.example.Enotes_API_Service.dto.UserRequest;
 import com.example.Enotes_API_Service.entity.AccountStatus;
 import com.example.Enotes_API_Service.entity.Role;
 import com.example.Enotes_API_Service.entity.User;
@@ -14,7 +14,6 @@ import com.example.Enotes_API_Service.service.JwtService;
 import com.example.Enotes_API_Service.service.UserService;
 import com.example.Enotes_API_Service.service.EmailService;
 import com.example.Enotes_API_Service.util.Validation;
-import jakarta.servlet.http.HttpServletRequest;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -55,11 +54,11 @@ public class UserServiceImpl implements UserService {
     private JwtService jwtService;
 
     @Override
-    public Boolean register(UserDto userDto, String url) throws Exception{
+    public Boolean register(UserRequest userRequest, String url) throws Exception{
 
-        validation.userValidation(userDto);
-        User user = mapper.map(userDto, User.class);
-        setRole(userDto, user);
+        validation.userValidation(userRequest);
+        User user = mapper.map(userRequest, User.class);
+        setRole(userRequest, user);
 
         AccountStatus status = AccountStatus.builder()
                 .isActive(false)
@@ -87,7 +86,7 @@ public class UserServiceImpl implements UserService {
             String token = jwtService.generateToken(customUserDetails.getUser());
 
             return LoginResponse.builder()
-                    .user(mapper.map(customUserDetails.getUser(), UserDto.class))
+                    .user(mapper.map(customUserDetails.getUser(), UserRequest.class))
                     .token(token).build();
         }
         return null;
@@ -114,8 +113,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    private void setRole(UserDto userDto, User user) {
-        List<Integer> reqRoleId = userDto.getRoles().stream().map(UserDto.RoleDto::getId).toList();
+    private void setRole(UserRequest userRequest, User user) {
+        List<Integer> reqRoleId = userRequest.getRoles().stream().map(UserRequest.RoleDto::getId).toList();
         List<Role> roles = roleRepository.findAllById(reqRoleId);
         user.setRoles(roles);
     }

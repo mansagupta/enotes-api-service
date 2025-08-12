@@ -12,6 +12,7 @@ import com.example.Enotes_API_Service.repository.FavoriteNotesRepository;
 import com.example.Enotes_API_Service.repository.FileRepository;
 import com.example.Enotes_API_Service.repository.NotesRepository;
 import com.example.Enotes_API_Service.service.NotesService;
+import com.example.Enotes_API_Service.util.CommonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
@@ -158,8 +159,9 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public NotesResponse getAllNotesByUser(Integer userId, Integer pageNo, Integer pageSize) {
+    public NotesResponse getAllNotesByUser(Integer pageNo, Integer pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Integer userId = CommonUtil.getLoggedInUser().getId();
         Page<Notes> pageNotes = notesRepository.findByCreatedByAndIsDeletedFalse(userId, pageable);
 
         List<NotesDto> notesDto = pageNotes.get().map(n -> mapper.map(n, NotesDto.class)).toList();
@@ -198,7 +200,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public List<NotesDto> getUserRecycleBinNotes(Integer userId) {
+    public List<NotesDto> getUserRecycleBinNotes() {
+        Integer userId = CommonUtil.getLoggedInUser().getId();
         List<Notes> recycleNotes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
         return recycleNotes.stream().map(notes->mapper.map(notes, NotesDto.class)).toList();
     }
@@ -214,7 +217,8 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
-    public void emptyRecycleBin(int userId) {
+    public void emptyRecycleBin() {
+        Integer userId = CommonUtil.getLoggedInUser().getId();
         List<Notes> recycleNotes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
         if(!CollectionUtils.isEmpty(recycleNotes)){
             notesRepository.deleteAll(recycleNotes);
@@ -223,7 +227,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public void favoriteNotes(Integer notesId) throws Exception {
-        int userId = 1;
+        int userId = CommonUtil.getLoggedInUser().getId();
         Notes notes = notesRepository.findById(notesId).orElseThrow(() -> new ResourceNotFoundException("Favorite Notes not found, invalid notes id!"));
         FavoriteNotes favoriteNotes = FavoriteNotes.builder()
                 .notes(notes)
@@ -240,7 +244,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public List<FavoriteNotesDto> getUserFavoriteNotes() throws Exception {
-        int userId = 1;
+        int userId = CommonUtil.getLoggedInUser().getId();
         List<FavoriteNotes> favoriteNotes = favoriteNotesRepository.findByUserId(userId);
         return favoriteNotes.stream().map(fn -> mapper.map(fn, FavoriteNotesDto.class)).toList();
     }

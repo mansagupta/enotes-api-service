@@ -6,6 +6,7 @@ import com.example.Enotes_API_Service.enums.ToDoStatus;
 import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.repository.ToDoRepository;
 import com.example.Enotes_API_Service.service.ToDoService;
+import com.example.Enotes_API_Service.util.CommonUtil;
 import com.example.Enotes_API_Service.util.Validation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,7 +60,7 @@ public class ToDoServiceImpl implements ToDoService {
 
     @Override
     public List<ToDoDto> getToDoByUser() {
-        Integer userId = 1;
+        Integer userId = CommonUtil.getLoggedInUser().getId();
         List<ToDo> toDos = toDoRepository.findByCreatedBy(userId);
         return toDos.stream().map(td -> mapper.map(td, ToDoDto.class)).toList();
     }
