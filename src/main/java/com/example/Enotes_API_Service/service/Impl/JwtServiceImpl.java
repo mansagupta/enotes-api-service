@@ -1,8 +1,11 @@
 package com.example.Enotes_API_Service.service.Impl;
 
 import com.example.Enotes_API_Service.entity.User;
+import com.example.Enotes_API_Service.exception.JwtTokenExpiredException;
 import com.example.Enotes_API_Service.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -56,8 +59,14 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public String extractUsername(String token) {
-         Claims claims = extractAllClaims(token);
-         return claims.getSubject();
+        try {
+            Claims claims = extractAllClaims(token);
+            return claims.getSubject();
+        } catch (ExpiredJwtException e) {
+            throw new JwtTokenExpiredException("Token is expired");
+        } catch (JwtException e) {
+            throw new JwtTokenExpiredException("Invalid jwt token");
+        }
     }
 
     private Claims extractAllClaims(String token) {
