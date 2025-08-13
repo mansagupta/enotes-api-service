@@ -3,7 +3,7 @@ package com.example.Enotes_API_Service.controller;
 import com.example.Enotes_API_Service.dto.LoginRequest;
 import com.example.Enotes_API_Service.dto.LoginResponse;
 import com.example.Enotes_API_Service.dto.UserRequest;
-import com.example.Enotes_API_Service.service.UserService;
+import com.example.Enotes_API_Service.service.AuthService;
 import com.example.Enotes_API_Service.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private UserService userService;
+    private AuthService authService;
 
     @PostMapping("/save")
     public ResponseEntity<?> registerUser(@RequestBody UserRequest userRequest, HttpServletRequest request) throws Exception {
         String url = CommonUtil.getUrl(request);
-        Boolean register = userService.register(userRequest, url);
+        Boolean register = authService.register(userRequest, url);
         if(register){
             return CommonUtil.createBuildResponseMessage("Registration successful", HttpStatus.CREATED);
         }
@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) throws Exception {
-        LoginResponse loginResponse = userService.login(loginRequest);
+        LoginResponse loginResponse = authService.login(loginRequest);
         if(ObjectUtils.isEmpty(loginResponse)){
             return CommonUtil.createErrorResponseMessage("Invalid credentials", HttpStatus.BAD_REQUEST);
         }
