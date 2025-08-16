@@ -177,6 +177,24 @@ public class NotesServiceImpl implements NotesService {
     }
 
     @Override
+    public NotesResponse getAllNotesByUserSearch(String keyword, Integer pageNo, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Integer userId = CommonUtil.getLoggedInUser().getId();
+        Page<Notes> pageNotes = notesRepository.searchNotes(keyword, userId, pageable);
+
+        List<NotesDto> notesDto = pageNotes.get().map(n -> mapper.map(n, NotesDto.class)).toList();
+        return NotesResponse.builder()
+                .notes(notesDto)
+                .pageNo(pageNotes.getNumber())
+                .pageSize(pageNotes.getSize())
+                .totalElements(pageNotes.getNumberOfElements())
+                .totalPages(pageNotes.getTotalPages())
+                .isFirst(pageNotes.isFirst())
+                .isLast(pageNotes.isLast())
+                .build();
+    }
+
+    @Override
     public byte[] downloadFile(FileDetails fileDetails) throws Exception {
 
         InputStream io = new FileInputStream(fileDetails.getPath());
