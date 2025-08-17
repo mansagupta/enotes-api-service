@@ -1,26 +1,25 @@
 package com.example.Enotes_API_Service.controller;
+
 import com.example.Enotes_API_Service.dto.ToDoDto;
+import com.example.Enotes_API_Service.endpoint.ToDoControllerEndpoint;
 import com.example.Enotes_API_Service.service.ToDoService;
 import com.example.Enotes_API_Service.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/toDo")
-public class ToDoController {
+public class ToDoController implements ToDoControllerEndpoint {
 
     @Autowired
     private ToDoService toDoService;
 
-    @PostMapping("/save")
-    @PreAuthorize("hasRole('user')")
-    public ResponseEntity<?> saveToDo(@RequestBody ToDoDto toDoDto) throws Exception{
+    @Override
+    public ResponseEntity<?> saveToDo(@RequestBody ToDoDto toDoDto) throws Exception {
         Boolean saveToDo = toDoService.saveToDo(toDoDto);
         if(saveToDo) {
             return CommonUtil.createBuildResponseMessage("ToDo saved. Success!", HttpStatus.CREATED);
@@ -29,16 +28,14 @@ public class ToDoController {
         }
     }
 
-    @GetMapping("/get/{id}")
-    @PreAuthorize("hasRole('user')")
+    @Override
     public ResponseEntity<?> getToDo(@PathVariable Integer id) throws Exception {
         ToDoDto toDo = toDoService.getToDoById(id);
         return CommonUtil.createBuildResponse(toDo, HttpStatus.OK);
     }
 
-    @GetMapping("/list")
-    @PreAuthorize("hasRole('user')")
-    public ResponseEntity<?> getAllToDoByUser() throws Exception {
+    @Override
+    public ResponseEntity<?> getAllToDoByUser() {
         List<ToDoDto> toDoList = toDoService.getToDoByUser();
         if(CollectionUtils.isEmpty(toDoList)) {
             return ResponseEntity.noContent().build();
