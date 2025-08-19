@@ -6,7 +6,6 @@ import com.example.Enotes_API_Service.dto.PasswordResetRequest;
 import com.example.Enotes_API_Service.entity.User;
 import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.repository.UserRepository;
-import com.example.Enotes_API_Service.service.EmailService;
 import com.example.Enotes_API_Service.service.UserService;
 import com.example.Enotes_API_Service.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;

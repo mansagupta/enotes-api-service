@@ -4,9 +4,6 @@ spring:
   profiles:
     active: dev
 
-server:
-  port: 9090
-
 ---
 # Dev Config
 spring:
@@ -40,9 +37,20 @@ spring:
         starttls:
           enable: true
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
+
 file:
   upload:
     path: notes/
+
+server:
+  port: 9090
 
 ---
 # Test Config
@@ -77,9 +85,21 @@ spring:
         starttls:
           enable: true
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
+
+
 file:
   upload:
     path: notes/
+
+server:
+  port: 9091
 
 ---
 # Prod Config
@@ -114,9 +134,21 @@ spring:
         starttls:
           enable: true
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
+
+
 file:
   upload:
     path: notes/
+
+server:
+  port: 9092
 
 ---
 # Uat Config
@@ -151,7 +183,19 @@ spring:
         starttls:
           enable: true
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tagsSorter: alpha
+    path: /enotes-doc
+  api-docs:
+    path: /enotes-api-doc
+
+
 file:
   upload:
     path: notes/
+
+server:
+  port: 9093
 

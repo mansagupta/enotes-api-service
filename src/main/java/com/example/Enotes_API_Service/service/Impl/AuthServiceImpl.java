@@ -9,7 +9,6 @@ import com.example.Enotes_API_Service.repository.RoleRepository;
 import com.example.Enotes_API_Service.repository.UserRepository;
 import com.example.Enotes_API_Service.service.JwtService;
 import com.example.Enotes_API_Service.service.AuthService;
-import com.example.Enotes_API_Service.service.EmailService;
 import com.example.Enotes_API_Service.util.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
