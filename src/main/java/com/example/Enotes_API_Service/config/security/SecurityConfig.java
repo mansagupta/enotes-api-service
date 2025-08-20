@@ -51,7 +51,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(req -> req.requestMatchers("/api/v1/home/**", "/api/v1/auth/**", "/swagger-ui/**",
-                                "/v3/api-docs/**", "/enotes-doc/**", "/enotes-api-doc/**", "/actuator/**")
+                                "/v3/api-docs/**", "/enotes-doc/**", "/enotes-api-doc/**", "/actuator/**", "/api/v1/cache/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())

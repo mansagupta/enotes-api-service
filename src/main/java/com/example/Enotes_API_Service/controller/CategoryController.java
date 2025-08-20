@@ -6,6 +6,7 @@ import com.example.Enotes_API_Service.endpoint.CategoryControllerEndpoint;
 import com.example.Enotes_API_Service.service.CategoryService;
 import com.example.Enotes_API_Service.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +33,7 @@ public class CategoryController implements CategoryControllerEndpoint {
     }
 
     @Override
+    @Cacheable("allCategory")
     public ResponseEntity<?> getAllCategory(){
         List<CategoryDto> allCategory = categoryService.getAllCategory();
         if(CollectionUtils.isEmpty(allCategory)){
