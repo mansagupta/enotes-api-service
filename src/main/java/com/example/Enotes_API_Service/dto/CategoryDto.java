@@ -1,12 +1,10 @@
 package com.example.Enotes_API_Service.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Date;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor

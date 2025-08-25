@@ -1,12 +1,10 @@
 package com.example.Enotes_API_Service.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor

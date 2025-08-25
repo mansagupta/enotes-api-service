@@ -7,12 +7,14 @@ import com.example.Enotes_API_Service.exception.ExistDataException;
 import com.example.Enotes_API_Service.exception.ResourceNotFoundException;
 import com.example.Enotes_API_Service.repository.CategoryRepository;
 import com.example.Enotes_API_Service.service.CategoryService;
+import com.example.Enotes_API_Service.util.CommonUtil;
 import com.example.Enotes_API_Service.util.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +45,8 @@ public class CategoryServiceImpl implements CategoryService {
 
         if(ObjectUtils.isEmpty(category.getId())){
             category.setIsDeleted(false);
-//            category.setCreatedBy(1);
-//            category.setCreatedOn(new Date());
+            category.setCreatedBy(CommonUtil.getLoggedInUser().getId());
+            category.setCreatedOn(new Date());
         } else {
             updateCategory(category);
         }
